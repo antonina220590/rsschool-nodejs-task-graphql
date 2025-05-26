@@ -8,6 +8,8 @@ import {
 import type { User as PrismaUser } from '@prisma/client';
 import { UUIDType } from './uuid.js';
 import { GraphQLContext } from '../context.js';
+import { PostType } from './PostType.js';
+import { ProfileType } from './ProfileType.js';
 
 export const UserType: GraphQLObjectType = new GraphQLObjectType({
   name: 'User',
@@ -80,6 +82,3 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
     },
   }),
 });
-
-const PostType = new GraphQLObjectType({ name: 'PostPlaceholder', fields: {} });
-const ProfileType = new GraphQLObjectType({ name: 'ProfilePlaceholder', fields: {} });

@@ -1,13 +1,9 @@
-// src/routes/graphql/RootQueryType.ts
-
 import { GraphQLObjectType, GraphQLList, GraphQLNonNull } from 'graphql';
-import type { GraphQLContext } from './context.js'; // Наш типизированный контекст
-
-// Импортируем все наши типы объектов, enum'ы и кастомные скаляры
+import type { GraphQLContext } from './context.js';
 import { UserType } from './types/UserType.js';
 import { PostType } from './types/PostType.js';
 import { ProfileType } from './types/ProfileType.js';
-import { MemberType } from './types/memberType.js';
+import { MemberType } from './types/MemberType.js';
 import { MemberTypeIdEnumType } from './types/MemberTypeIdEnum.js';
 import { UUIDType } from './types/uuid.js';
 
