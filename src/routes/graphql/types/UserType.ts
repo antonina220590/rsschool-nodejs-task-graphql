@@ -31,9 +31,7 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
         _args: unknown,
         context: GraphQLContext,
       ) => {
-        return context.prisma.profile.findUnique({
-          where: { userId: parentUser.id },
-        });
+        return context.dataLoaders.profileByUserIdLoader.load(parentUser.id);
       },
     },
     posts: {
@@ -43,9 +41,7 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
         _args: unknown,
         context: GraphQLContext,
       ) => {
-        return context.prisma.post.findMany({
-          where: { authorId: parentUser.id },
-        });
+        return context.dataLoaders.postsByAuthorIdLoader.load(parentUser.id);
       },
     },
     userSubscribedTo: {
@@ -55,13 +51,7 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
         _args: unknown,
         context: GraphQLContext,
       ) => {
-        return context.prisma.user.findMany({
-          where: {
-            subscribedToUser: {
-              some: { subscriberId: parentUser.id },
-            },
-          },
-        });
+        return context.dataLoaders.userSubscribedToLoader.load(parentUser.id);
       },
     },
     subscribedToUser: {
@@ -71,13 +61,7 @@ export const UserType: GraphQLObjectType = new GraphQLObjectType({
         _args: unknown,
         context: GraphQLContext,
       ) => {
-        return context.prisma.user.findMany({
-          where: {
-            userSubscribedTo: {
-              some: { authorId: parentUser.id },
-            },
-          },
-        });
+        return context.dataLoaders.subscribedToUserLoader.load(parentUser.id);
       },
     },
   }),

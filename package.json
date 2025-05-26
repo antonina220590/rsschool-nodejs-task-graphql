@@ -15,7 +15,7 @@
     "seed": "node --loader ts-node/esm prisma/seed.ts"
   },
   "scripts": {
-    "test-integnrity": "node integrity.cjs",
+    "test-integrity": "node integrity.cjs",
     "test-queries": "npm run build:ts && tap --timeout=0 \"test/routes/gql-queries.test.js\"",
     "test-mutations": "npm run build:ts && tap --timeout=0 \"test/routes/gql-mutations.test.js\"",
     "test-rule": "npm run build:ts && tap --timeout=0 \"test/routes/gql-rule.test.js\"",

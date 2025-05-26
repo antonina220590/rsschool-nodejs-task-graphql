@@ -26,15 +26,9 @@ export const ProfileType: GraphQLObjectType = new GraphQLObjectType({
         context: GraphQLContext,
       ) => {
         if (!parentProfile.memberTypeId) {
-          throw new Error('memberTypeId is missing on profile');
+          return null;
         }
-        const memberType = await context.prisma.memberType.findUnique({
-          where: { id: parentProfile.memberTypeId },
-        });
-        if (!memberType) {
-          throw new Error(`MemberType with id ${parentProfile.memberTypeId} not found.`);
-        }
-        return memberType;
+        return context.dataLoaders.memberTypeByIdLoader.load(parentProfile.memberTypeId);
       },
     },
   }),
