@@ -1,6 +1,6 @@
 import { GraphQLEnumType } from 'graphql';
 
-export const MemberTypeId = new GraphQLEnumType({
+export const MemberTypeIdEnumType = new GraphQLEnumType({
   name: 'MemberTypeId',
   description: 'Identifier for the type of membership (Basic or Business).',
   values: {
