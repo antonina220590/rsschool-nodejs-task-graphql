@@ -107,27 +107,29 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           ),
           userSubscribedToLoader: new DataLoader<string, PrismaUser[]>(
             async (subscriberIds: readonly string[]) => {
-              const subscribersWithTheirSubscriptionLinks =
-                await fastify.prisma.user.findMany({
-                  where: {
-                    id: { in: subscriberIds as string[] },
-                  },
-                  include: {
-                    userSubscribedTo: {
-                      include: {
-                        author: true,
-                      },
-                    },
-                  },
-                });
+              console.log(
+                '[DataLoader] userSubscribedToLoader batchFn called with subscriberIds:',
+                subscriberIds,
+              );
+
+              const relations = await fastify.prisma.subscribersOnAuthors.findMany({
+                where: {
+                  subscriberId: { in: subscriberIds as string[] },
+                },
+                include: {
+                  author: true,
+                },
+              });
 
               const authorsBySubscriberId = new Map<string, PrismaUser[]>();
-              subscribersWithTheirSubscriptionLinks.forEach((subscriber) => {
-                const authors =
-                  subscriber.userSubscribedTo
-                    ?.map((subLink) => subLink.author)
-                    .filter(Boolean) || [];
-                authorsBySubscriberId.set(subscriber.id, authors);
+              relations.forEach((relation) => {
+                if (!authorsBySubscriberId.has(relation.subscriberId)) {
+                  authorsBySubscriberId.set(relation.subscriberId, []);
+                }
+
+                if (relation.author) {
+                  authorsBySubscriberId.get(relation.subscriberId)!.push(relation.author);
+                }
               });
 
               return subscriberIds.map((id) => authorsBySubscriberId.get(id) || []);
@@ -135,26 +137,29 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           ),
           subscribedToUserLoader: new DataLoader<string, PrismaUser[]>(
             async (authorIds: readonly string[]) => {
-              const authorsWithTheirSubscriberLinks = await fastify.prisma.user.findMany({
+              console.log(
+                '[DataLoader] subscribedToUserLoader batchFn called with authorIds:',
+                authorIds,
+              );
+
+              const relations = await fastify.prisma.subscribersOnAuthors.findMany({
                 where: {
-                  id: { in: authorIds as string[] },
+                  authorId: { in: authorIds as string[] },
                 },
                 include: {
-                  subscribedToUser: {
-                    include: {
-                      subscriber: true,
-                    },
-                  },
+                  subscriber: true,
                 },
               });
 
               const subscribersByAuthorId = new Map<string, PrismaUser[]>();
-              authorsWithTheirSubscriberLinks.forEach((author) => {
-                const subscribers =
-                  author.subscribedToUser
-                    ?.map((subLink) => subLink.subscriber)
-                    .filter(Boolean) || [];
-                subscribersByAuthorId.set(author.id, subscribers);
+              relations.forEach((relation) => {
+                if (!subscribersByAuthorId.has(relation.authorId)) {
+                  subscribersByAuthorId.set(relation.authorId, []);
+                }
+
+                if (relation.subscriber) {
+                  subscribersByAuthorId.get(relation.authorId)!.push(relation.subscriber);
+                }
               });
 
               return authorIds.map((id) => subscribersByAuthorId.get(id) || []);
