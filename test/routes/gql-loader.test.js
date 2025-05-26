@@ -62,6 +62,7 @@ await test('gql-loader', async (t) => {
     t.ok(afterHistory.length - beforeHistory.length <= 6);
 
     const history = afterHistory.slice(beforeHistory.length);
+
     const foundPostCall = history.find(
       ({ model, operation }) => model === 'Post' && operation === 'findMany',
     );
